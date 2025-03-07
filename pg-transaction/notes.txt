@@ -1,0 +1,42 @@
+Excercise 1:
+
+Throw error from 2nd level - catch err, log and throw and in 1st level catch and do not throw
+
+Observations:
+2nd level transaction committed
+1st level transaction committed 
+0the level transaction committed
+
+
+Excercise 2:
+
+Throw error from 2nd level - catch the error in the same level and do not throw
+
+Observations:
+
+2nd level transaction committed
+1st level transaction committed 
+0the level transaction committed
+
+
+Excercise 3:
+
+Throw error from 2nd level - catch the error in 1st level, do not throw
+
+Observations:
+
+2nd level transaction rolled back
+1st level transaction rolled back 
+0the level transaction commited
+
+
+
+Excercise 4:
+
+Throw error from 2nd level - catch the error in 1st level, throw err;
+
+Observations:
+
+2nd level transaction rolled back
+1st level transaction rolled back 
+0the level transaction rolled back
