@@ -57,5 +57,14 @@ The objective of this project to demonstrate Postgres database transaction manag
 11. Verify that the database, roles tables and data is created
 12. Run the main.js file using the command ```node main.js```
 
+#### Learnings
+---
+1. db.tx() method of pg-promise library is responsible for creating and managing transaction (Begin, commit and rollback)
+2. db.tx() accepts two parameters, one is the transaction mode and other is the function to be invoked with t as paramater
+3. db.tx() obtains a connection from the connection pool and once the transaction is completed (commit/rollback) it releases the connection back to the connection pool
+4. No explicit connection pool managment implementation is needed when using db.tx();
+5. If an error is thrown inside a child transaction, only the child transaction is rolled back
+6. If an error is throw inside the parent transaction, all the child transactions are also rolled back along with the parent transaction
+
 
 
