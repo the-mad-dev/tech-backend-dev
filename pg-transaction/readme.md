@@ -20,7 +20,7 @@ The objective of this project to demonstrate Postgres database transaction manag
 
 ##### Execution flow:
 1. main.js will be initialised with db and a request context. Request context should be unique per request
-2. main.js testingTransaction() will open a transaction T1. 
+2. main.js transactionDemo() will open a transaction T1. 
 3. Peform a get query using T1. 
 4. open T2 which is a child of T1. 
 5. Perform a get query using T2. 
@@ -34,7 +34,7 @@ The objective of this project to demonstrate Postgres database transaction manag
 13. Exit T1
 
 #### Variations:
-1. Throwing an error in any of the transaction will roll back the transaction and it's child transaction
+1. Throwing error in any of the transaction() will roll back the transaction and it's child transactions
 
 
 #### Pre-requisites:
