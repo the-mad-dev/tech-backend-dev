@@ -1,11 +1,10 @@
 const pgp = require("pg-promise")();
 
-// const cn = {
-//     host: 'localhost',
-//     port: 5432,
-//     database: 'order_management'
-// }
+const cn = {
+    connectionString: "postgres://username:password@localhost:5432/orders", 
+    max: 10
+}
 
-const db = pgp("postgres://username:password@localhost:5432/orders")
+const db = pgp(cn);
 
 module.exports = db;
