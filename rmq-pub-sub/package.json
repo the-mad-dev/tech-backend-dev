@@ -1,0 +1,18 @@
+{
+  "name": "rmq",
+  "version": "1.0.0",
+  "description": "poc for rmq message processing",
+  "main": "publisher.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.10.5",
+    "lodash": "^4.17.21",
+    "pg-promise": "^11.10.2",
+    "rabbitmq-client": "^5.0.2",
+    "uuid": "^11.0.3"
+  }
+}
