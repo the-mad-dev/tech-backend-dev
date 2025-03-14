@@ -25,7 +25,7 @@ class TestRMQProducer {
 }
 
 let requestContext = {request_id: uuid.v4()};
-let rmqProducer = new TestRMQProducer(requestContext, config); //in real a new request context will be generated for each request
+let rmqProducer = new TestRMQProducer(requestContext, config); //in realtime a new request context will be generated for each request
 let message = {name: "arun"};
 rmqProducer.sendMessage(message)
 .then(() => {
