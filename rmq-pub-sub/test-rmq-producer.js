@@ -3,24 +3,24 @@ const db = require('./db/db');
 const rabbitMQConnection = require('./base/amqp-connection')
 const MessageProducer = require('./lib/message-producer');
 
-class TestRMQ {
+class TestRMQProducer {
     constructor(requestContext, config) {
         this.config = config;
         this.dependencies = {}
-        this.dependencies.db = db;
+        this.dependencies.db = db(this.config);
         this.dependencies.rabbitMQConnection = rabbitMQConnection.bind(this, this.config);
         this.requestContext = requestContext;
         this.messageProducer = new MessageProducer(this.requestContext, this.config, this.dependencies);
     }
 
-    async testMessage() {
-        await this.messageProducer.sendMessageToExchange('order_updates', {name: "arun"});
+    async sendMessage(message) {
+        await this.messageProducer.sendMessageToExchange('order_updates', message);
     }
 }
 
-
-let testRmq = new TestRMQ({request_id:"123-123"}, config);
-testRmq.testMessage()
+let rmqProducer = new TestRMQProducer({request_id:"123-123"}, config);
+let message = {name: "arun"};
+rmqProducer.sendMessage(message)
 .then(() => {
     setTimeout(() => {
         console.log("Message published");

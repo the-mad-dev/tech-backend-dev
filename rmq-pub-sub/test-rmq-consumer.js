@@ -1,27 +1,30 @@
 const config = require('./config/config.json');
 const rabbitMQConnection = require('./base/amqp-connection');
 const db = require('./db/db');
+const uuid = require('uuid');
 const MessageConsumer = require('./lib/message-consumer');
 const ProcessorFactory = require('./lib/processor/processor-factory');
 
 class TestRMQConsumer {
-    constructor(requestContext, config) {
+    constructor(config) {
         this.config = config;
         this.dependencies = {}
-        this.dependencies.rabbitMQConnection = rabbitMQConnection.bind(this, this.config);
-        this.dependencies.db = db;
-        this.requestContext = requestContext;
-        this.messageConsumer = new MessageConsumer( this.requestContext, this.config, this.dependencies, new ProcessorFactory(this.requestContext, this.dependencies));
+        this._setDependencies();
+        this.messageConsumer = new MessageConsumer(this.config, this.dependencies, new ProcessorFactory(this.dependencies));
     }
 
-    async testMessage() {
+    _setDependencies() {
+        this.dependencies.rabbitMQConnection = rabbitMQConnection.bind(this, this.config);
+        this.dependencies.db = db(this.config);
+    }
+
+    async consume() {
         await this.messageConsumer.drainMessages();
     }
 }
 
-let requestContext = {request_id: "123-123"};
-let testRMQConsumer = new TestRMQConsumer(requestContext, config);
-testRMQConsumer.testMessage()
+let testRMQConsumer = new TestRMQConsumer(config);
+testRMQConsumer.consume()
 .then(() => {
     console.log("Started Consumer...");
 })

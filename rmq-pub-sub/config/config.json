@@ -1,6 +1,6 @@
 {
     "rmq": {
-        "connection_url  ": "amqp://username:password@localhost:5672",
+        "connection_string  ": "amqp://username:password@localhost:5672",
         "messaging": {
             "bindings": {
                 "order_updates": ["order_updates_listener"]
@@ -14,5 +14,9 @@
                 }
             }
         }
+    },
+    "postgres": {
+        "connection_string": "postgres://ecomdba:ecomdba@localhost:5432/orders",
+        "max_connections": 10
     }
 }

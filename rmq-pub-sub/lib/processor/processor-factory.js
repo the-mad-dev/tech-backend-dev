@@ -1,15 +1,14 @@
 const OrderUpdatesProcessor = require('./order-updates-processor');
 
 class ProcessorFactory {
-    constructor(requestContext, dependencies) {
+    constructor(dependencies) {
         this.dependencies = dependencies;
-        this.requestContext = requestContext;
     }
 
-    getProcessorInstance(queue) {
+    getProcessorInstance(queue, requestContext) {
         switch(queue) {
             case 'order_updates_listener':
-                return new OrderUpdatesProcessor(this.requestContext, this.dependencies);
+                return new OrderUpdatesProcessor(requestContext, this.dependencies);
             default:
                 console.log('No matching processor found');
                 return null;

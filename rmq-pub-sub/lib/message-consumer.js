@@ -1,8 +1,14 @@
 const BaseMessenger = require("../base/base-messenger");
+const uuid = require('uuid');
 
 class MessageConsumer extends BaseMessenger{
-    constructor(requestContext, config, dependencies, processorFactory) {
-        super(requestContext, config, dependencies)
+    /**
+     * processor factory instance is accepted in the constructor, 
+     * because message-consumer is a generic consumer model, 
+     * any microservice can pass it's own processor factory instance to process service specfic messages using its own logic
+     */
+    constructor(config, dependencies, processorFactory) { 
+        super(null, config, dependencies)
         this.processorFactory = processorFactory;
     }
 
@@ -14,21 +20,20 @@ class MessageConsumer extends BaseMessenger{
     }
 
     processMessage(queue, exchangeName, channel) {
-        console.log('processMessage',queue, exchangeName);
         const me = this;
         return ( async function(msg) {
-            let messageProcessor = me.processorFactory.getProcessorInstance(queue);
+            me.requestContext = {request_id: uuid.v4()};
+            let messageProcessor = me.processorFactory.getProcessorInstance(queue, me.requestContext);
             messageProcessor.process(msg, me._ackMessage(msg, channel));
         });
     }
 
     _ackMessage(msg, channel, info) {
-        const me = this;
         return (  function() {
             let ackAt = new Date();
             try {
                 channel.ack(msg);
-                console.log('_ackMessage acked at',{ackAt, msg: msg.content.toString()})
+                console.log('_ackMessage acked at', {ackAt, msg: msg.content.toString()})
             } catch(err) {
                 console.log("_ackMessage",err)
             }

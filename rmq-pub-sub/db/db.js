@@ -2,9 +2,12 @@
 
 const pgp = require("pg-promise")();
 
-const cn = {
-    connectionString: "postgres://username:password@localhost:5432/orders", 
-    max: 10 //connection pool limit
+function getDb(config) {
+    const cn = {
+        connectionString: config.postgres.connection_string, 
+        max: config.postgres.max_connections //connection pool limit
+    }
+    return pgp(cn);
 }
 
-module.exports = pgp(cn);
+module.exports = getDb;
