@@ -24,7 +24,11 @@ class MessageConsumer extends BaseMessenger{
         return ( async function(msg) {
             me.requestContext = {request_id: uuid.v4()};
             let messageProcessor = me.processorFactory.getProcessorInstance(queue, me.requestContext);
-            messageProcessor.process(msg, me._ackMessage(msg, channel));
+            if(messageProcessor) {
+                messageProcessor.process(msg, me._ackMessage(msg, channel));
+            } else {
+                console.log('No processor found for queue', queue);
+            }
         });
     }
 

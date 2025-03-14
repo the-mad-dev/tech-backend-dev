@@ -1,7 +1,6 @@
 const config = require('./config/config.json');
 const rabbitMQConnection = require('./base/amqp-connection');
 const db = require('./db/db');
-const uuid = require('uuid');
 const MessageConsumer = require('./lib/message-consumer');
 const ProcessorFactory = require('./lib/processor/processor-factory');
 

@@ -1,24 +1,31 @@
-let config = require('./config/config.json');
+const config = require('./config/config.json');
 const db = require('./db/db');
 const rabbitMQConnection = require('./base/amqp-connection')
 const MessageProducer = require('./lib/message-producer');
+const Enum = require('./constants/enum');
+const uuid = require('uuid');
 
 class TestRMQProducer {
     constructor(requestContext, config) {
         this.config = config;
-        this.dependencies = {}
-        this.dependencies.db = db(this.config);
-        this.dependencies.rabbitMQConnection = rabbitMQConnection.bind(this, this.config);
         this.requestContext = requestContext;
-        this.messageProducer = new MessageProducer(this.requestContext, this.config, this.dependencies);
+        this.dependencies = {}
+        this._setDependencies();
+        this.messageProducer = new MessageProducer(this.requestContext, this.config, this.dependencies); //in real time message producer class will be used by manager/controller classes
+    }
+
+    _setDependencies() {
+        this.dependencies.rabbitMQConnection = rabbitMQConnection.bind(this, this.config);
+        this.dependencies.db = db(this.config);
     }
 
     async sendMessage(message) {
-        await this.messageProducer.sendMessageToExchange('order_updates', message);
+        await this.messageProducer.sendMessageToExchange(Enum.exchange.ORDER_UPDATES, message);
     }
 }
 
-let rmqProducer = new TestRMQProducer({request_id:"123-123"}, config);
+let requestContext = {request_id: uuid.v4()};
+let rmqProducer = new TestRMQProducer(requestContext, config); //in real a new request context will be generated for each request
 let message = {name: "arun"};
 rmqProducer.sendMessage(message)
 .then(() => {
