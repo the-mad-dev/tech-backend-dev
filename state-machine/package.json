@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "amqplib": "^0.10.5",
+    "pg-promise": "^11.10.2",
+    "rabbitmq-client": "^5.0.2",
+    "uuid": "^11.1.0"
+  }
+}
