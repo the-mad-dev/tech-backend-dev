@@ -13,7 +13,7 @@ const MessageHistoryDBAccesor = require('../db/message-history-db-accessor');
 class MessageProducer extends BaseMessenger {
   constructor(requestContext, config, dependencies) {
     super(requestContext, config, dependencies);
-    this.messageHistoryDBAccessor = new MessageHistoryDBAccesor(requestContext, dependencies);
+    this.messageHistoryDBAccessor = new MessageHistoryDBAccesor(requestContext, config, dependencies);
   }
 
   async sendMessageToExchange(exchange, message) {

@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "amqplib": "^0.10.5",
+    "joi": "^17.13.3",
     "lodash": "^4.17.21",
     "pg-promise": "^11.10.2",
     "rabbitmq-client": "^5.0.2",

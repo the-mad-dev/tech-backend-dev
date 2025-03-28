@@ -3,18 +3,20 @@ const rabbitMQConnection = require('./base/amqp-connection');
 const db = require('./db/db');
 const MessageConsumer = require('./lib/message-consumer');
 const ProcessorFactory = require('./lib/processor/processor-factory');
+const sqlFilesCache = require('./sql/index')
 
 class TestRMQConsumer {
     constructor(config) {
         this.config = config;
         this.dependencies = {}
         this._setDependencies();
-        this.messageConsumer = new MessageConsumer(this.config, this.dependencies, new ProcessorFactory(this.dependencies));
+        this.messageConsumer = new MessageConsumer(this.config, this.dependencies, new ProcessorFactory(this.config, this.dependencies));
     }
 
     _setDependencies() {
         this.dependencies.rabbitMQConnection = rabbitMQConnection.bind(this, this.config);
-        this.dependencies.db = db(this.config);
+        this.dependencies.pgp = db(this.config);
+        this.dependencies.sqlFilesCache = sqlFilesCache;
     }
 
     async consume() {
