@@ -2,10 +2,10 @@ const PGAccessBase = require('../../base/pg-access-base');
 const MessageHistoryDBAccesor = require('../../db/message-history-db-accessor');
 
 class BaseMessageProcessor extends PGAccessBase {
-    constructor(requestContext, dependencies) {
+    constructor(requestContext, config, dependencies) {
         super(requestContext, dependencies);
         this.dependencies  = dependencies;
-        this.messageHistoryDBAccesor = new MessageHistoryDBAccesor(requestContext, dependencies);
+        this.messageHistoryDBAccesor = new MessageHistoryDBAccesor(requestContext, config, dependencies);
     }
 
     async process(message, ack) {

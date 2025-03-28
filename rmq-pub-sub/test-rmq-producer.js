@@ -3,6 +3,7 @@ const db = require('./db/db');
 const rabbitMQConnection = require('./base/amqp-connection')
 const MessageProducer = require('./lib/message-producer');
 const Enum = require('./constants/enum');
+const sqlFilesCache = require('./sql/index');
 const uuid = require('uuid');
 
 class TestRMQProducer {
@@ -16,7 +17,8 @@ class TestRMQProducer {
 
     _setDependencies() {
         this.dependencies.rabbitMQConnection = rabbitMQConnection.bind(this, this.config);
-        this.dependencies.db = db(this.config);
+        this.dependencies.pgp = db(this.config);
+        this.dependencies.sqlFilesCache = sqlFilesCache;
     }
 
     async sendMessage(message) {

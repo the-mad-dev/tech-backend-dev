@@ -1,8 +1,8 @@
 const BaseMessageProcessor = require('./base-message-processor');
 
 class OrderUpdatesProcessor extends BaseMessageProcessor{
-    constructor(requestContext, dependencies) {
-        super(requestContext, dependencies);
+    constructor(requestContext, config, dependencies) {
+        super(requestContext, config, dependencies);
         this.dependencies = dependencies;
     }
 
