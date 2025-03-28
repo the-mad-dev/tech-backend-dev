@@ -2,7 +2,7 @@ const pg = require('pg-promise');
 const _ = require('lodash');
 const pgErrors = require('./pg-errors.json');
 const PgError = require('./pg-error');
-const baseSqlCmdsCache = require('./sql');
+const baseSqlCmdsCache = require('../sql');
 const PGAccessBase = require('./pg-access-base');
 
 class BaseAccessor {

@@ -1,5 +1,5 @@
 const loadQuery = require('./base/load-sql');
-const Constants = require('../constants');
+const Constants = require('../constants/constants');
 
 const load = function(fileName) {
     return loadQuery(fileName, __dirname);

@@ -1,6 +1,6 @@
-const BaseAccessor = require('./base-accessor');
-const Constants = require('./constants');
-const Schema = require('./schema/pg-schema')
+const BaseAccessor = require('../base/base-accessor');
+const Constants = require('../constants/constants');
+const Schema = require('../schema/pg-schema')
 
 class EmployeesDBAccesor extends BaseAccessor{
     constructor(dependencies, config, requestContext) {

@@ -1,8 +1,8 @@
-const db = require('./db');
-const EmployeesDBAccesor = require('./employees-db-accessor');
-const PGAccessBase = require('./pg-access-base');
+const db = require('./db/db');
+const EmployeesDBAccesor = require('./db/employees-db-accessor');
+const PGAccessBase = require('./base/pg-access-base');
 const sqlFilesCache = require('./sql/index');
-const config = require('./config.json');
+const config = require('./config/config.json');
 
 //For the purpose of demo, Main is directly extending PGAccessBase. In live project, layers of abstraction will be introduced.
 class Main extends PGAccessBase{
