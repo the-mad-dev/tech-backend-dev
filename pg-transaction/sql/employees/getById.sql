@@ -1,0 +1,1 @@
+select id, data from employees where id=$1;

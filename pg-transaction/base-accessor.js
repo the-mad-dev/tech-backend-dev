@@ -2,8 +2,10 @@ const pg = require('pg-promise');
 const _ = require('lodash');
 const pgErrors = require('./pg-errors.json');
 const PgError = require('./pg-error');
+const baseSqlCmdsCache = require('./sql');
+const PGAccessBase = require('./pg-access-base');
 
-class PGPure {
+class BaseAccessor {
     constructor(requestContext, dependencies, config, tableName, joiSchema, pgp, validationOptions={}, opts={}) {
         if(_.isArray(joiSchema)) {
             this.multiColumnJoiSchema = joiSchema;
@@ -15,6 +17,14 @@ class PGPure {
         this.pgp = pgp;
         this.validationOptions = validationOptions;
 
+    }
+
+    getSharedTxObject(t) {
+        let txObj = PGAccessBase.getLatestTransactionFromCache(this.getRawRequestContext());
+        if(!txObj) {
+            return t || this.pgp;
+        }
+        return txObj;
     }
 
     clearSensitiveData(data) {
@@ -273,4 +283,4 @@ class PGPure {
     }
 }
 
-module.exports = PGPure;
+module.exports = BaseAccessor;
