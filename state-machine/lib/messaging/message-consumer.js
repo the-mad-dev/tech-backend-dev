@@ -7,8 +7,8 @@ class MessageConsumer extends BaseMessenger{
      * because message-consumer is a generic consumer model, 
      * any microservice can pass it's own processor factory instance to process service specfic messages using its own logic
      */
-    constructor(dependencies, config, processorFactory) { 
-        super(null, dependencies, config)
+    constructor(config, dependencies, processorFactory) { 
+        super(null, config, dependencies)
         this.processorFactory = processorFactory;
     }
 

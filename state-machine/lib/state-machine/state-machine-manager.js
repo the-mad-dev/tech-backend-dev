@@ -4,18 +4,20 @@ const StateMachineDBAccessor = require('../db/state-machine-db-accesor');
 const PGAccessBase = require('../base/pg-access-base');
 
 class StateMachineManager extends PGAccessBase{
-    constructor(requestContext, dependencies, config) {
+    constructor(requestContext, config, dependencies) {
         super(requestContext, dependencies);
         this.stateMachineConfigCache = {};
         this.postTxnFns = [];
-        this.stateMachineFactory = new StateMachineFactory(requestContext, dependencies, config);
-        this.stateMachineDBAccessor = new StateMachineDBAccessor(requestContext, dependencies);
+        this.stateMachineFactory = new StateMachineFactory(requestContext, config, dependencies);
+        this.stateMachineDBAccessor = new StateMachineDBAccessor(requestContext, config, dependencies);
     }
     async initiateByEvent(stateMachineId, eventName, args) {
         //get actions for event
         let actions = await this._getEventActionsByEventName(stateMachineId, eventName);
+            
         if(!_.isEmpty(actions)) {
             //trigger actions
+           
             await this.transaction(async (t) => {
                 args.t = t;
                 await this._triggerActions(stateMachineId, actions, args);
@@ -91,7 +93,7 @@ class StateMachineManager extends PGAccessBase{
 
     async getStateMachineConfigById(stateMachineId) {
             let result = await this.stateMachineDBAccessor.getByName(stateMachineId);
-            return result.data;
+            return result[0].data;
     }
 } 
 

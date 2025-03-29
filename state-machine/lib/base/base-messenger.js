@@ -11,7 +11,7 @@ const _ = require('lodash');
 const PGAccessBase = require('./pg-access-base');
 
 class BaseMessenger extends PGAccessBase{
-  constructor(requestContext, dependencies, config) {
+  constructor(requestContext, config, dependencies) {
     super(requestContext, dependencies)
     this.config = config;
     this.messagingConnection = dependencies.rabbitMQConnection; //function to create rmq connection using amqp lib

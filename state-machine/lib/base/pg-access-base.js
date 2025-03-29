@@ -10,7 +10,11 @@ let transactionCache  = new WeakMap(); //using weak map to create weak reference
 class PGAccessBase {
   constructor(requestContext, dependencies) {
     this.requestContext = requestContext;
-    this.db = dependencies.db;
+    this.db = dependencies.pgp;
+  }
+
+  getRawRequestContext() {
+    return this.requestContext;
   }
 
   /**

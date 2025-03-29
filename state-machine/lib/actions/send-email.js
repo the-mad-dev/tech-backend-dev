@@ -1,12 +1,13 @@
 const Enum = require('../constants/Enum');
-const BaseAction = require('./base-action');
+const BaseAction = require('../base/base-action');
+
 const MessageProducer = require('../messaging/message-producer');
 
 class SendEmail extends BaseAction {
-    constructor(requestContext, dependencies, config) { 
-        super(requestContext, dependencies, config);
+    constructor(requestContext, config, dependencies) { 
+        super(requestContext, dependencies);
         this.action = "SendEmail";
-        this.messageProducer = new MessageProducer(requestContext, dependencies, config);
+        this.messageProducer = new MessageProducer(requestContext, config, dependencies);
     }
 
     async _doAction(args) {
