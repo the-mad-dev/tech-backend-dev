@@ -5,19 +5,20 @@ const Enum = require("./lib/constants/Enum.js");
 const _ = require("lodash");
 const uuid = require("uuid");
 const config = require("./config/config.json");
+const sqlFilesCache = require('./lib/sql/index.js')
 
 class Test {
   constructor(requestContext, config) {
     this.config = config;
     this.dependencies = {};
     this._setDependencies();
-    this.stateMachineManager = new StateMachineManager(requestContext, this.dependencies, this.config
-    );
+    this.stateMachineManager = new StateMachineManager(requestContext, this.config, this.dependencies);
   }
 
   _setDependencies() {
     this.dependencies.rabbitMQConnection = rabbitMQConnection.bind(this, this.config);
-    this.dependencies.db = db(this.config);
+    this.dependencies.pgp = db(this.config);
+    this.dependencies.sqlFilesCache = sqlFilesCache;
   }
 
   async main() {

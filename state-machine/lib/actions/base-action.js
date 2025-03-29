@@ -1,8 +1,8 @@
 const PGAccessBase = require('../base/pg-access-base');
 
 class BaseAction extends PGAccessBase { 
-   constructor(requestContext, dependencies, config) {
-    super(requestContext, dependencies, config);
+   constructor(requestContext, dependencies) {
+    super(requestContext, dependencies);
    }
 
     async doAction(args) {

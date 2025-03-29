@@ -2,8 +2,8 @@ const Enum = require('../constants/Enum');
 const BaseAction = require('./base-action');
 
 class PlaceOrder extends BaseAction {
-    constructor(requestContext, dependencies, config) { 
-        super(requestContext, dependencies, config);
+    constructor(requestContext, config, dependencies ) { 
+        super(requestContext, dependencies);
         this.action = "PlaceOrder";
     }
     async _doAction(args) {
