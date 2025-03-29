@@ -1,5 +1,6 @@
 const Enum = require('../constants/Enum');
-const BaseAction = require('./base-action');
+const BaseAction = require('../base/base-action');
+
 const MessageProducer = require('../messaging/message-producer');
 
 class SendEmail extends BaseAction {

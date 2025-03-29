@@ -1,5 +1,5 @@
 const Enum = require('../constants/Enum');
-const BaseAction = require('./base-action');
+const BaseAction = require('../base/base-action');
 
 class CapturePayment extends BaseAction {
     constructor(requestContext, config, dependencies) { 

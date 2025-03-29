@@ -1,4 +1,4 @@
-const PGAccessBase = require('../base/pg-access-base');
+const PGAccessBase = require('./pg-access-base');
 
 class BaseAction extends PGAccessBase { 
    constructor(requestContext, dependencies) {

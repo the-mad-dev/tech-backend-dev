@@ -1,6 +1,6 @@
 const StateMachineManager = require("./lib/state-machine/state-machine-manager.js");
 const rabbitMQConnection = require("./lib/base/amqp-connection.js");
-const db = require("./lib/db/db.js");
+const db = require("./lib/base/db.js");
 const Enum = require("./lib/constants/Enum.js");
 const _ = require("lodash");
 const uuid = require("uuid");
