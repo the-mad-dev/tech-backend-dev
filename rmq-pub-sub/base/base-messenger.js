@@ -1,12 +1,3 @@
-/** <Self help>
- * test(name, age) {
- *  console.log(this.greet, name, age)
- * }
- * call - invoke a function with the give context test(this, arg1, arg2). Function arguments are passed as separate parameters. let data = {greet: 'Hi'}. o/p of test(data, 'the_mad_dev', '31') is "hi the_mad_dev 31"
- * apply - invoke a function with the given context test(this, [arg1, arg2]). Function arguments are passed as a single array. let data = {greet: 'hello'}. o/p of test(data, 'the_devil', '32') is "hello the_devil 32"
- * bind - creates a new function with the given context. test(this, arg1, arg2). Function arguments are passed as separate parameters. let data = {greet: 'hola'}, let boundTest = test(data, 'the_angel'), o/p of boundTest('33') is 'hola the_angel 33'
- */
-
 const _ = require('lodash');
 const PGAccessBase = require('./pg-access-base');
 
@@ -167,7 +158,7 @@ class BaseMessenger extends PGAccessBase{
 }
 
 getExchangeBindings(exchangeId) {
-    return this.config.rmq.messaging.bindings[exchangeId];
+    return this.config.rmq.messaging.bindings[exchangeId] || [];
 }
 
 async _bindQueueToExchange(queue, exchange, exchangeId) {

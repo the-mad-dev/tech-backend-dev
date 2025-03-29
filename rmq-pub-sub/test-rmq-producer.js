@@ -22,6 +22,7 @@ class TestRMQProducer {
     }
 
     async sendMessage(message) {
+        await this.messageProducer.sendMessageToExchange(Enum.exchange.MAIL_UPDATES, message);
         await this.messageProducer.sendMessageToExchange(Enum.exchange.ORDER_UPDATES, message);
     }
 }
