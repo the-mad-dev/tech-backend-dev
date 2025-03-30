@@ -1,6 +1,0 @@
-{
-    "postgres": {
-        "connection_string": "postgres://username:password@localhost:5432/orders",
-        "max_connections": 10
-    }
-}
