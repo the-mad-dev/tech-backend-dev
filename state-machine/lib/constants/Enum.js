@@ -10,8 +10,20 @@ const StateMachineEvents = {
     PlaceOrderFailed: "PlaceOrderFailed"
 }
 
+const Queue =  {
+    ORDER_UPDATES_LISTENER: 'order_updates_listener',
+    MAIL_UPDATES_LISTENER: 'mail_updates_listener'
+};
+
+const Exchange =  {
+    ORDER_UPDATES: 'order_updates',
+    MAIL_UPDATES: 'mail_updates'
+};
+
 module.exports = {
     StateMachineEvents,
-    StateMachineActions
+    StateMachineActions,
+    Queue,
+    Exchange
 }
 

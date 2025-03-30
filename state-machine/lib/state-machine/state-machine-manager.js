@@ -1,15 +1,18 @@
 const _ = require('lodash');
 const StateMachineFactory = require('./state-machine-factory');
 const StateMachineDBAccessor = require('../db/state-machine-db-accesor');
+const MessageProducer = require('../messaging/message-producer');
 const PGAccessBase = require('../base/pg-access-base');
 
 class StateMachineManager extends PGAccessBase{
     constructor(requestContext, config, dependencies) {
         super(requestContext, dependencies);
+        this.dependencies = dependencies;
         this.stateMachineConfigCache = {};
         this.postTxnFns = [];
         this.stateMachineFactory = new StateMachineFactory(requestContext, config, dependencies);
         this.stateMachineDBAccessor = new StateMachineDBAccessor(requestContext, config, dependencies);
+        this.messageProducer = new MessageProducer(requestContext, config, dependencies);
     }
     async initiateByEvent(stateMachineId, eventName, args) {
         //get actions for event
@@ -17,12 +20,11 @@ class StateMachineManager extends PGAccessBase{
             
         if(!_.isEmpty(actions)) {
             //trigger actions
-           
             await this.transaction(async (t) => {
                 args.t = t;
                 await this._triggerActions(stateMachineId, actions, args);
-            })
-            
+            });
+            await this._executePostTxnFns();
         }
         //return result;
         return args.result
@@ -83,8 +85,14 @@ class StateMachineManager extends PGAccessBase{
     async _triggerActions(stateMachineId, actions, args) {
         for(let _action of actions) {
             let nextStateMachineId = _action.state_machine_id || stateMachineId;
+            console.log('nextStateMachineId', stateMachineId);
             if(_action.async && _action.exchange) {
                 //handle queuing operations
+                this._enqueuePostTxns(this.messageProducer, this.messageProducer.sendMessageToExchange, [_action.exchange, {
+                    state_machine_id: nextStateMachineId,
+                    action_id: _action.name,
+                    args: _.get(args, 'message_args')
+                }])
             } else {
                 await this._trigger(nextStateMachineId, _action.name, args, _action.exception);
             }
@@ -94,6 +102,23 @@ class StateMachineManager extends PGAccessBase{
     async getStateMachineConfigById(stateMachineId) {
             let result = await this.stateMachineDBAccessor.getByName(stateMachineId);
             return result[0].data;
+    }
+
+    _enqueuePostTxns(funcContext, func, funcArgs) {
+        this.postTxnFns.push({funcContext, func, funcArgs})
+    }
+
+    async _executePostTxnFns() {
+        for(let arg of this.postTxnFns) {
+            if(_.has(arg, 'funcArgs[2].t')) {
+                _.set(arg, 'funcArgs[2].t', this.dependencies.pgp)
+            }
+            try {
+                await arg.func.apply(arg.funcContext, arg.funcArgs);
+            } catch(err) {
+                console.log(err);
+            }
+        }
     }
 } 
 

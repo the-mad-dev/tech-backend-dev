@@ -23,7 +23,7 @@ class Test {
 
   async main() {
     let args = {
-      id: "18cd7233-fdb2-43d8-b95b-72dd87ff94a0"
+      order_id: "18cd7233-fdb2-43d8-b95b-72dd87ff94a0"
     };
     await this.stateMachineManager.initiateByEvent("TestStateMachine", Enum.StateMachineEvents.Start, args);
   }
