@@ -18,7 +18,11 @@ class BaseMessenger extends PGAccessBase{
     this.rmqCon = null; //to store connection in memory
     this._channelCache = undefined; //to store channels in memory
     this.consumerList = [];  //the consumers (consumerTAg) and the associated channels are added to this array when binding exchange to the queue when starting the messaging consumer. Used to cancel the consumer when gracefully shutting down
-    this._attachProcessTerminationHandlers(); //this will attach signal listeners (process.on) to the  current process
+    let listeners = process.listenerCount('SIGINT');
+    if(listeners == 0) { // to avoid duplicate listners for the same process. This will create a memory leak. In the case of the poc, both message consumer and message producer extends base messenger in which the process listener is attached. Hence 2 listeners will be created if a check is not added here
+      this._attachProcessTerminationHandlers();
+    }
+     //this will attach signal listeners (process.on) to the  current process
   }
 
   _exitProcessWithDelay(exitCode=0, code = null, delay = 1000 ) {
@@ -48,6 +52,10 @@ class BaseMessenger extends PGAccessBase{
   _attachProcessTerminationHandlers() {
     process.on('SIGTERM', this._terminationSignalHandler.bind(this, 0, 'SIGTERM')); //polite termination. kill command
     process.on('SIGINT', this._terminationSignalHandler.bind(this, 0, 'SIGINT')); //ctrl + c in the terminal where the process is running
+    process.on('SIGINT', () => {
+      console.log(`SIGINT received at ${new Date().toISOString()} by process ID ${process.pid}`);
+    });
+    
     process.on('SIGQUIT', this._terminationSignalHandler.bind(this, 0, 'SIGQUIT')); //ctrl + /  in the terminal where the process is running. This will terminate the process and does a core dump to perform debugging
     process.on('SIGHUP', this._terminationSignalHandler.bind(this, 0, 'SIGHUP')); //closing the terminal window or end of the terminal session or kill -HUP <pid> -> this will send SIGHUP to a process often causing it to reload configuration . Typically used to reload configuration without restarting the daemon process.
   }
@@ -154,7 +162,7 @@ class BaseMessenger extends PGAccessBase{
     channel.publish(exchange, "", Buffer.from(JSON.stringify(payload)), {
       persistent: true,
     });
-    // await channel.waitForConfirms(); //add reliability, process waits till rmq sends an acknowledgment that the message is accepted, but a slight performance overhead. Since we are using data queuing pattern i.e message is stored in database loss of this message can be tolerated, as we can implement a cron worker to re-push the unsent messages - for the poc if you want enable this, then the setTimeout in test-rmq-producer class, that exits the process after 2 seconds can be removed
+    await channel.waitForConfirms(); //add reliability, process waits till rmq sends an acknowledgment that the message is accepted, but a slight performance overhead. Since we are using data queuing pattern i.e message is stored in database loss of this message can be tolerated, as we can implement a cron worker to re-push the unsent messages - for the poc if you want enable this, then the setTimeout in test-rmq-producer class, that exits the process after 2 seconds can be removed
     // await channel.close();  //will be closed when the process exits, ensure that the process exits
     // await this.rmqCon.close(); //will be closed when the process exits, ensure that the process exits
   }
@@ -167,7 +175,7 @@ class BaseMessenger extends PGAccessBase{
 }
 
 getExchangeBindings(exchangeId) {
-    return this.config.rmq.messaging.bindings[exchangeId];
+    return this.config.rmq.messaging.bindings[exchangeId] || [];
 }
 
 async _bindQueueToExchange(queue, exchange, exchangeId) {

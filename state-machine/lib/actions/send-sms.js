@@ -1,16 +1,16 @@
 const Enum = require('../constants/Enum');
 const BaseAction = require('../base/base-action');
 
-class SendEmail extends BaseAction {
+class SendSMS extends BaseAction {
     constructor(requestContext, config, dependencies) { 
         super(requestContext, dependencies);
-        this.action = "SendEmail";
+        this.action = "SendSMS";
     }
 
     async _doAction(args) {
-        console.log('Email sent to', args.email);
+        console.log('SMS sent to', args.phone);
         return;
     }
 }
 
-module.exports = SendEmail;
+module.exports = SendSMS;

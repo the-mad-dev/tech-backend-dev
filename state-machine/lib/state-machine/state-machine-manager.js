@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const StateMachineFactory = require('./state-machine-factory');
 const StateMachineDBAccessor = require('../db/state-machine-db-accesor');
-const MessageProducer = require('../messaging/message-producer');
+const MessageQueueManager = require('../messaging/message-queue-manager');
 const PGAccessBase = require('../base/pg-access-base');
 
 class StateMachineManager extends PGAccessBase{
@@ -12,7 +12,7 @@ class StateMachineManager extends PGAccessBase{
         this.postTxnFns = [];
         this.stateMachineFactory = new StateMachineFactory(requestContext, config, dependencies);
         this.stateMachineDBAccessor = new StateMachineDBAccessor(requestContext, config, dependencies);
-        this.messageProducer = new MessageProducer(requestContext, config, dependencies);
+        this.messageQueueManager = new MessageQueueManager(requestContext, config, dependencies);
     }
     async initiateByEvent(stateMachineId, eventName, args) {
         //get actions for event
@@ -88,7 +88,7 @@ class StateMachineManager extends PGAccessBase{
             console.log('nextStateMachineId', stateMachineId);
             if(_action.async && _action.exchange) {
                 //handle queuing operations
-                this._enqueuePostTxns(this.messageProducer, this.messageProducer.sendMessageToExchange, [_action.exchange, {
+                this._enqueuePostTxns(this.messageQueueManager, this.messageQueueManager.sendMessageToExchange, [_action.exchange, {
                     state_machine_id: nextStateMachineId,
                     action_id: _action.name,
                     args: _.get(args, 'message_args')

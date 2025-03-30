@@ -2,6 +2,7 @@ const config = require('./config/config.json');
 const rabbitMQConnection = require('./lib/base/amqp-connection');
 const db = require('./lib/base/db');
 const MessageConsumer = require('./lib/messaging/message-consumer');
+const MessageProducer = require('./lib/messaging/message-producer');
 const ProcessorFactory = require('./lib/messaging/processor/processor-factory');
 const sqlFilesCache = require('./lib/sql/index');
 const nconf = require('nconf');
@@ -20,6 +21,7 @@ class MessageConsumerService {
         this.dependencies.rabbitMQConnection = rabbitMQConnection.bind(this, this.config);
         this.dependencies.pgp = db(this.config);
         this.dependencies.sqlFilesCache = sqlFilesCache;
+        this.dependencies.messageProducer = new MessageProducer({request_id: 123}, config, this.dependencies);
     }
 
     _modifyExchangeConfigClusterId(clusterId) {

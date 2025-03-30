@@ -3,27 +3,27 @@
 const uuid = require('uuid');
 const amqplib = require("amqplib");
 
-const BaseMessenger = require('../base/base-messenger');
+const PGAccessBase = require('../base/pg-access-base');
 const MessageHistoryDBAccesor = require('../db/message-history-db-accessor');
 
-class MessageProducer extends BaseMessenger {
+class MessageQueueManager extends PGAccessBase {
   constructor(requestContext, config, dependencies) {
-    super(requestContext, config, dependencies);
+    super(requestContext, dependencies);
     this.messageHistoryDBAccessor = new MessageHistoryDBAccesor(requestContext, config, dependencies);
+    this.messageProducer = dependencies.messageProducer;
   }
 
-  async sendMessage(exchange, payload) {
+  async sendMessageToExchange(exchange, message) {
     const method = 'sendMessageToExchange';
     try {
-      const channel = await this.getChannel(true);
-      await channel.assertExchange(exchange, "fanout", { durable: true });
-      channel.publish(exchange, "", Buffer.from(JSON.stringify(payload)), {
-      persistent: true,
+  
+      let messageId = uuid.v4();
+      let payload = {id: messageId};
+      await this.transaction(async (t) => {
+        await this.messageHistoryDBAccessor.dbInsertMessage(t, messageId, {message, exchange, status:"Initiated"});
       });
-      await channel.waitForConfirms(); //add reliability, process waits till rmq sends an acknowledgment that the message is accepted, but a slight performance overhead. Since we are using data queuing pattern i.e message is stored in database loss of this message can be tolerated, as we can implement a cron worker to re-push the unsent messages - for the poc if you want enable this, then the setTimeout in test-rmq-producer class, that exits the process after 2 seconds can be removed
-    // await channel.close();  //will be closed when the process exits, ensure that the process exits
-    // await this.rmqCon.close(); //will be closed when the process exits, ensure that the process exits
-      console.log("Message sent");
+      await this.messageProducer.sendMessage(exchange, payload);
+      console.log("Message sent:",messageId);
     } catch (err) {
       console.error("Error sending message:", err);
     }
@@ -48,7 +48,7 @@ class MessageProducer extends BaseMessenger {
   }
 }
 
-module.exports = MessageProducer;
+module.exports = MessageQueueManager;
 
 // let messageProducer = new MessageProducer(config);
 
