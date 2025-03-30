@@ -12,7 +12,7 @@ class SendEmail extends BaseAction {
 
     async _doAction(args) {
         console.log('Email sent');
-        await this.messageProducer.sendMessageToExchange('order_updates', {order_id: args.id, mail_event_type: "order_placed"})
+        await this.messageProducer.sendMessageToExchange(Enum.Exchange.ORDER_UPDATES, {order_id: args.id, event_type: "shipped"})
         return;
     }
 }
