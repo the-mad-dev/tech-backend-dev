@@ -1,4 +1,5 @@
 const StateMachineManager = require("./lib/state-machine/state-machine-manager.js");
+const MessageProducer = require('./lib/messaging/message-producer.js');
 const rabbitMQConnection = require("./lib/base/amqp-connection.js");
 const db = require("./lib/base/db.js");
 const Enum = require("./lib/constants/Enum.js");
@@ -10,6 +11,7 @@ const sqlFilesCache = require('./lib/sql/index.js')
 class Test {
   constructor(requestContext, config) {
     this.config = config;
+    this.requestContext = requestContext;
     this.dependencies = {};
     this._setDependencies();
     this.stateMachineManager = new StateMachineManager(requestContext, this.config, this.dependencies);
@@ -19,6 +21,7 @@ class Test {
     this.dependencies.rabbitMQConnection = rabbitMQConnection.bind(this, this.config);
     this.dependencies.pgp = db(this.config);
     this.dependencies.sqlFilesCache = sqlFilesCache;
+    this.dependencies.messageProducer = new MessageProducer(this.requestContext, this.config, this.dependencies);
   }
 
   async main() {

@@ -1,7 +1,8 @@
 const StateMachineActions = {
     PlaceOrder: "PlaceOrder",
     CapturePayment: "CapturePayment",
-    SendEmail: "SendEmail"
+    SendEmail: "SendEmail",
+    SendSMS: "SendSMS"
 }
 
 const StateMachineEvents = {

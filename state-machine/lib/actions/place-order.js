@@ -11,7 +11,7 @@ class PlaceOrder extends BaseAction {
     }
     async _doAction(args) {
         console.log('Order placed');
-        args.message_args = _.extend( { order_id: args.order_id, email: 'test@gmail.com'}, args.message_args);
+        args.message_args = _.extend( { order_id: args.order_id, email: 'test@gmail.com', phone: 9840090}, args.message_args);
         return Enum.StateMachineEvents.PlaceOrderSuccess;
     }
 }
